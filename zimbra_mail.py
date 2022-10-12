@@ -53,7 +53,7 @@ def send_mail(applicant_name, dpcode, uri, usr_token, comm, application_file):
         'SendMsgRequest',
         {
             'm': {
-                'su': f'Simpe Mortagage of {applicant_name}',
+                'su': f'QUOTATION of {applicant_name}',
                 'f': '!',
                 'attach':{
                     'aid': aid,
