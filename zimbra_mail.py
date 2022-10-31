@@ -17,16 +17,17 @@ def authenticate_zimbra():
     url_upload = 'https://mapi.canarabank.in:7071/service/upload'
     uri= 'https://mapi.canarabank.in/'
     comm = Communication(url)
-    usr_token = auth.authenticate(url=url, account='sabyasachi@canarabank.in', key='Sabya@2025', use_password=True)
+    usr_token = auth.authenticate(url=url, account='sabyasachi@canarabank.in', key='Sabya@2026', use_password=True)
     return uri, usr_token, comm
 
 
-def upload_request(uri,token, application_file,applicant):
+def upload_request(uri,token, invoice_file,challan_file,mudra_file,applicant):
     fileContent = 0
     zipObj = ZipFile(f'{applicant}.zip', 'w')
-    zipObj.write(application_file)
+    zipObj.write(invoice_file)
+    zipObj.write(challan_file)
+    zipObj.write(mudra_file)
     zipObj.close()
-    print('this was triggered')
     with open(f'{applicant}.zip','rb') as f:
         fileContent = f.read()
     headers = {
@@ -35,49 +36,43 @@ def upload_request(uri,token, application_file,applicant):
     headers["Content-Type"]="multipart/form-data; boundary=----WebKitFormBoundary1abcdefghijklmno"
     headers["Cookie"]="ZM_AUTH_TOKEN="+token+";"
     m = MultipartEncoder(fields={
-    'clientFile':(f'{applicant}.zip',fileContent,"application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    'clientFile':(f'{applicant}.zip',fileContent,"application/x-rar-compressed")
     }, boundary = '----WebKitFormBoundary1abcdefghijklmno')
     r = requests.post(uri+"/service/upload",data=m,headers=headers,verify=False)
     re_pattern = "'\d+\S+'"
     attachment_id = str(re.search(re_pattern,r.text).group(0)[1:-1])
     print(attachment_id)
     os.remove(f'{applicant}.zip')
+    os.remove(invoice_file)
+    os.remove(challan_file)
+    os.remove(mudra_file)
     return attachment_id
 
 
-def send_mail(applicant_name, dpcode, uri, usr_token, comm, application_file):
-    aid = upload_request(uri=uri, token=usr_token,
-                         application_file=application_file, applicant=applicant_name[0:3])
+def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, comm, applicant_name):
+    aid = upload_request(uri=uri, token=usr_token,invoice_file=invoice_file,challan_file=challan_file,
+                         mudra_file=mudra_file, applicant=applicant_name[0:3])
     info_request = comm.gen_request(token=usr_token)
     info_request.add_request(
         'SendMsgRequest',
         {
             'm': {
-                'su': f'QUOTATION of {applicant_name}',
+                'su': f'Invoice,Challan,Mudra of {applicant_name}',
                 'f': '!',
                 'attach':{
                     'aid': aid,
                 },
-                'content': "Dear Sir,"
-                           ""
-                           ""
-                           "Please download the attachment and unzip it to find the relevant files."
-                           ""
-                           ""
-                           "Thanking You"
-                           "Sabyasachi Sharma-835148",
+                # 'content': {"Dear Sir, Please download the attachment and unzip it to find the relevant files./n Thanking You Sabyasachi Sharma-835148" },
                 'e': {
-                    'a': f'cb{dpcode}@canarabank.com',
+                    'a': f'adarshmishra12134@gmail.com',
                     't': 't',
-                    'p':'CB SONARI'
-                }
+                },
             },
         },
         'urn:zimbraMail'
     )
     info_response = comm.send_request(info_request)
     print(info_response.get_response())
-    os.remove(application_file)
 
 def html_builder(html_string_in, email_client):
     """

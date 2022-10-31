@@ -13,7 +13,8 @@ def hello_world():  # put application's code here
         html_string = open('templates//email-template.html', 'r').read()
         ret_obj = generate_document.populate_fields(request_form_object=request.form)
         zimbra_mail.send_mail(applicant_name=request.form['nameinput'], dpcode='19893',
-                              uri=uri, usr_token=auth_token, comm=communication, application_file=ret_obj)
+                              uri=uri, usr_token=auth_token, comm=communication, invoice_file=ret_obj[0],
+                              challan_file=ret_obj[1],mudra_file=ret_obj[2])
         return render_template_string(
             zimbra_mail.html_builder(html_string_in=html_string, email_client=request.form['nameinput']))
     else:
