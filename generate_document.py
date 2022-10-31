@@ -68,7 +68,7 @@ def populate_fields(request_form_object):
         'Name': request_form_object['nameinput'],
         'DATE': date_invoice,
         'FATHER NAME': request_form_object['Father_Name'],
-        'PAN': request_form_object['pan'],
+        'PAN': request_form_object['pan'].upper(),
         'mobaaplicant': request_form_object['mobaaplicant'],
         'Address_1': f"C/O {request_form_object['Father_Name']}, {request_form_object['Address1']}",
         'Address_2': f"{request_form_object['Address2']}, District {request_form_object['Address3']}, PIN:-{request_form_object['pincode']}",
