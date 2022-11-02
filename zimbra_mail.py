@@ -52,8 +52,9 @@ def upload_request(uri,token, invoice_file,challan_file,mudra_file,applicant):
 def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, comm, applicant_name):
     aid = upload_request(uri=uri, token=usr_token,invoice_file=invoice_file,challan_file=challan_file,
                          mudra_file=mudra_file, applicant=applicant_name[0:3])
-    info_request = comm.gen_request(token=usr_token)
+
     def gen_request(mail_id):
+        info_request = comm.gen_request(token=usr_token)
         info_request.add_request(
             'SendMsgRequest',
             {
@@ -72,6 +73,7 @@ def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, com
             },
             'urn:zimbraMail'
         )
+        return info_request
     info_response = comm.send_request(gen_request("adarshmishra12134@gmail.com"))
     print(info_response.get_response())
     info_response = comm.send_request(gen_request("cb19893@canarabank.com"))
