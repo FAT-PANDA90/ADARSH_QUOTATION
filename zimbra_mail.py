@@ -42,18 +42,13 @@ def upload_request(uri,token, invoice_file,challan_file,mudra_file,applicant):
     re_pattern = "'\d+\S+'"
     attachment_id = str(re.search(re_pattern,r.text).group(0)[1:-1])
     print(attachment_id)
-    os.remove(f'{applicant}.zip')
-    os.remove(invoice_file)
-    os.remove(challan_file)
-    os.remove(mudra_file)
     return attachment_id
 
 
 def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, comm, applicant_name):
-    aid = upload_request(uri=uri, token=usr_token,invoice_file=invoice_file,challan_file=challan_file,
-                         mudra_file=mudra_file, applicant=applicant_name[0:3])
-
     def gen_request(mail_id):
+        aid = upload_request(uri=uri, token=usr_token, invoice_file=invoice_file, challan_file=challan_file,
+                             mudra_file=mudra_file, applicant=applicant_name[0:3])
         info_request = comm.gen_request(token=usr_token)
         info_request.add_request(
             'SendMsgRequest',
@@ -77,7 +72,10 @@ def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, com
     info_response = comm.send_request(gen_request("adarshmishra12134@gmail.com"))
     print(info_response.get_response())
     info_response = comm.send_request(gen_request("cb19893@canarabank.com"))
-    print(info_response.get_response())
+    print(info_response.get_response())os.remove(f'{applicant_name}.zip')
+    os.remove(invoice_file)
+    os.remove(challan_file)
+    os.remove(mudra_file)
 
 def html_builder(html_string_in, email_client):
     """
