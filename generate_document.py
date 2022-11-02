@@ -46,7 +46,7 @@ def num2words(number):
     if crore > 0:
         word += get_all_word(crore)
         word += " crore "
-    word += get_all_word(number).strip() + " Rupees"
+    word += get_all_word(number).strip() + " Rupees Only"
     # if len(arr) > 1:
     #     if len(arr[1]) == 1:
     #         arr[1] += "0"
@@ -65,31 +65,31 @@ def populate_fields(request_form_object):
     challan_word = num2words(int(request_form_object['CH_Rate']))
 
     to_fill_dict = {
-        'Name': request_form_object['nameinput'],
+        'Name': request_form_object['nameinput'].upper(),
         'DATE': date_invoice,
-        'FATHER NAME': request_form_object['Father_Name'],
+        'Father_Name': request_form_object['Father_Name'].upper(),
         'PAN': request_form_object['pan'].upper(),
         'mobaaplicant': request_form_object['mobaaplicant'],
-        'Address_1': f"C/O {request_form_object['Father_Name']}, {request_form_object['Address1']}",
-        'Address_2': f"{request_form_object['Address2']}, District {request_form_object['Address3']}, PIN:-{request_form_object['pincode']}",
+        'Address_1': f"C/O {request_form_object['Father_Name'].upper()}, {request_form_object['Address1'].upper()}",
+        'Address_2': f"{request_form_object['Address2'].upper()}, District {request_form_object['Address3'].upper()}, PIN:-{request_form_object['pincode']}",
         'pincode': request_form_object['pincode'],
         'Model_Name': request_form_object['Model_Name'],
-        'Chassis': request_form_object['Chassis'],
-        'Motor': request_form_object['Motor'],
-        'Colour': request_form_object['Colour'],
-        'Battery_Make': request_form_object['Battery_Make'],
-        'BAT_1': request_form_object['BAT_1'],
-        'BAT_2': request_form_object['BAT_2'],
-        'BAT_3': request_form_object['BAT_3'],
-        'BAT_4': request_form_object['BAT_4'],
+        'Chassis': request_form_object['Chassis'].upper(),
+        'Motor': request_form_object['Motor'].upper(),
+        'Colour': request_form_object['Colour'].upper(),
+        'Battery_Make': request_form_object['Battery_Make'].upper(),
+        'BAT_1': request_form_object['BAT_1'].upper(),
+        'BAT_2': request_form_object['BAT_2'].upper(),
+        'BAT_3': request_form_object['BAT_3'].upper(),
+        'BAT_4': request_form_object['BAT_4'].upper(),
         'RATE': request_form_object['RATE'],
         'SGST': SGST,
         'CGST': CGST,
         'TOTAL_NUM': str(total_invoice),
-        'Total_Words': invoice_word,
+        'Total_Words': invoice_word.upper(),
         'Invoice_no': request_form_object['Invoice_no'],
         'CH_Rate': request_form_object['CH_Rate'],
-        'CH_Rate_words': challan_word,
+        'CH_Rate_words': challan_word.upper(),
     }
     # print(to_fill_dict)
     fillpdfs.write_fillable_pdf('Invoice_mail.pdf', invoice_file, to_fill_dict, flatten=True)

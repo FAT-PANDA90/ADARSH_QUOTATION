@@ -53,25 +53,28 @@ def send_mail(invoice_file, challan_file,mudra_file, dpcode, uri, usr_token, com
     aid = upload_request(uri=uri, token=usr_token,invoice_file=invoice_file,challan_file=challan_file,
                          mudra_file=mudra_file, applicant=applicant_name[0:3])
     info_request = comm.gen_request(token=usr_token)
-    info_request.add_request(
-        'SendMsgRequest',
-        {
-            'm': {
-                'su': f'Invoice,Challan,Mudra of {applicant_name}',
-                'f': '!',
-                'attach':{
-                    'aid': aid,
-                },
-                # 'content': {"Dear Sir, Please download the attachment and unzip it to find the relevant files./n Thanking You Sabyasachi Sharma-835148" },
-                'e': {
-                    'a': f'adarshmishra12134@gmail.com',
-                    't': 't',
+    def gen_request(mail_id):
+        info_request.add_request(
+            'SendMsgRequest',
+            {
+                'm': {
+                    'su': f'Invoice,Challan,Mudra of {applicant_name}',
+                    'f': '!',
+                    'attach':{
+                        'aid': aid,
+                    },
+                     'content': "Dear Sir, Please download the attachment and unzip it to find the relevant files./n Thanking You Sabyasachi Sharma-835148" ,
+                    'e': {
+                        'a': mail_id,
+                        't': 't',
+                    },
                 },
             },
-        },
-        'urn:zimbraMail'
-    )
-    info_response = comm.send_request(info_request)
+            'urn:zimbraMail'
+        )
+    info_response = comm.send_request(gen_request("adarshmishra12134@gmail.com"))
+    print(info_response.get_response())
+    info_response = comm.send_request(gen_request("cb19893@canarabank.com"))
     print(info_response.get_response())
 
 def html_builder(html_string_in, email_client):
